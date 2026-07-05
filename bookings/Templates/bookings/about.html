@@ -1,0 +1,444 @@
+{% extends 'bookings/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body { background: #f8f9fa; color: #333; }
+    .about-hero {
+        position: relative;
+        padding: 120px 20px;
+        background: linear-gradient(rgba(248, 249, 250, 0.9), rgba(248, 249, 250, 0.9)), url('https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2069') no-repeat center center/cover;
+        text-align: center;
+        color: #333;
+        overflow: hidden;
+    }
+
+    .about-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 80%, rgba(255, 75, 43, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(255, 65, 108, 0.1) 0%, transparent 50%);
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+    }
+
+    .about-hero h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        text-shadow: none;
+        animation: slideInFromTop 1s ease-out;
+    }
+
+    .about-hero p {
+        font-size: 1.3rem;
+        max-width: 700px;
+        margin: 0 auto 30px;
+        color: #666;
+        line-height: 1.6;
+        animation: slideInFromBottom 1s ease-out 0.3s both;
+    }
+
+    @keyframes slideInFromTop {
+        from {
+            opacity: 0;
+            transform: translateY(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideInFromBottom {
+        from {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .story-section {
+        padding: 100px 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #333;
+    }
+
+    .story-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 80px;
+        align-items: center;
+    }
+
+    .story-content h2 {
+        font-size: 2.5rem;
+        color: #ff4b2b;
+        margin-bottom: 30px;
+        position: relative;
+    }
+
+    .story-content h2::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 60px;
+        height: 4px;
+        background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        border-radius: 2px;
+    }
+
+    .story-content p {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .story-image {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+
+    .story-image img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .story-image:hover img {
+        transform: scale(1.05);
+    }
+
+    .features-section {
+        padding: 100px 20px;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    .features-container {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .features-container h2 {
+        text-align: center;
+        font-size: 2.8rem;
+        color: #ff4b2b;
+        margin-bottom: 20px;
+    }
+
+    .features-subtitle {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 80px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+    }
+
+    .feature-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 20px;
+        padding: 40px 30px;
+        text-align: center;
+        transition: all 0.4s ease;
+        border: 1px solid rgba(255, 65, 108, 0.2);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        transform: scaleX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .feature-card:hover::before {
+        transform: scaleX(1);
+    }
+
+    .feature-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(255, 65, 108, 0.25);
+        border-color: rgba(255, 65, 108, 0.4);
+    }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 25px;
+        font-size: 2rem;
+        box-shadow: 0 10px 25px rgba(255, 75, 43, 0.3);
+    }
+
+    .feature-card h3 {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .feature-card p {
+        color: #666;
+        line-height: 1.6;
+        font-size: 1rem;
+    }
+
+    .mission-section {
+        padding: 100px 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #333;
+        text-align: center;
+    }
+
+    .mission-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .mission-container h2 {
+        font-size: 2.8rem;
+        color: #ff4b2b;
+        margin-bottom: 30px;
+    }
+
+    .mission-container p {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: #666;
+        margin-bottom: 40px;
+    }
+
+    .mission-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 40px;
+        margin-top: 60px;
+    }
+
+    .stat-item {
+        padding: 20px;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #ff4b2b;
+        margin-bottom: 10px;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        color: #666;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .cta-section {
+        padding: 100px 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        text-align: center;
+        color: #333;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="stars" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.05)"/><circle cx="5" cy="15" r="0.5" fill="rgba(255,255,255,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23stars)"/></svg>');
+    }
+
+    .cta-section h2 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #ff4b2b;
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta-section p {
+        font-size: 1.3rem;
+        color: #666;
+        margin-bottom: 40px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-cta {
+        text-decoration: none;
+        background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+        box-shadow: 0 8px 25px rgba(255, 75, 43, 0.3);
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(255, 75, 43, 0.5);
+    }
+
+    @media (max-width: 768px) {
+        .about-hero h1 {
+            font-size: 2.5rem;
+        }
+        .story-container {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
+        .mission-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+</style>
+
+<section class="about-hero">
+    <h1>About EventPass</h1>
+    <p>Revolutionizing the way you experience events with cutting-edge technology and seamless digital solutions.</p>
+</section>
+
+<section class="story-section">
+    <div class="story-container">
+        <div class="story-content">
+            <h2>Our Story</h2>
+            <p>Founded in 2020, EventPass emerged from a simple idea: to make event ticketing as seamless and secure as possible. We recognized that traditional paper tickets were inefficient, prone to fraud, and environmentally unfriendly.</p>
+            <p>Today, we're proud to serve thousands of event organizers and millions of attendees worldwide, providing a platform that combines innovation, security, and user experience excellence.</p>
+            <p>Our journey is driven by a passion for creating memorable experiences and building connections between event creators and their audiences.</p>
+        </div>
+        <div class="story-image">
+            <img src="https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=2069" alt="EventPass Story">
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="features-container">
+        <h2>Why Choose EventPass?</h2>
+        <p class="features-subtitle">We combine technology, security, and user experience to deliver the best event ticketing platform.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Secure QR Verification</h3>
+                <p>Advanced QR code technology ensures every ticket is unique and tamper-proof, eliminating fraud and unauthorized entry.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3>Instant Booking</h3>
+                <p>Book tickets in seconds with our streamlined process. No queues, no hassle - just instant access to your events.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Mobile Optimized</h3>
+                <p>Seamlessly access your tickets on any device. Our responsive design works perfectly on smartphones, tablets, and desktops.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🌍</div>
+                <h3>Global Reach</h3>
+                <p>Connect with events worldwide. From local concerts to international conferences, we've got you covered.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Real-time Analytics</h3>
+                <p>Get instant insights into ticket sales, attendance patterns, and event performance with our comprehensive analytics.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">💚</div>
+                <h3>Eco-Friendly</h3>
+                <p>Go green with digital tickets. Reduce paper waste and contribute to a sustainable future for events.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mission-section">
+    <div class="mission-container">
+        <h2>Our Mission</h2>
+        <p>To democratize access to extraordinary experiences by providing a secure, innovative, and user-friendly platform that connects event creators with passionate audiences worldwide.</p>
+
+        <div class="mission-stats">
+            <div class="stat-item">
+                <div class="stat-number">500K+</div>
+                <div class="stat-label">Tickets Sold</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">1000+</div>
+                <div class="stat-label">Events Hosted</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Countries</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">Uptime</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <h2>Join the EventPass Revolution</h2>
+    <p>Ready to experience events like never before? Start exploring our platform today.</p>
+    <a href="{% url 'event_list' %}" class="btn-cta">Explore Events</a>
+</section>
+
+{% endblock %}

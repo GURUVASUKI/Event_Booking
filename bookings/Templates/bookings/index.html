@@ -1,0 +1,399 @@
+{% extends 'bookings/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body { background: #f8f9fa; color: #333; }
+    .hero {
+        position: relative;
+        text-align: center;
+        padding: 150px 20px;
+        background: linear-gradient(rgba(248, 249, 250, 0.9), rgba(248, 249, 250, 0.9)), url('https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070') no-repeat center center/cover;
+        overflow: hidden;
+    }
+
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 30% 40%, rgba(255, 75, 43, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 60%, rgba(255, 65, 108, 0.1) 0%, transparent 50%);
+        animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .hero h1 {
+        font-size: 4rem;
+        color: #333;
+        font-weight: 800;
+        text-shadow: none;
+        margin-bottom: 20px;
+        animation: fadeInUp 1s ease-out;
+    }
+
+    .hero p {
+        color: #666;
+        font-size: 1.4rem;
+        margin-bottom: 40px;
+        animation: fadeInUp 1s ease-out 0.3s both;
+    }
+
+    .btn-hero {
+        text-decoration: none;
+        background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        color: white;
+        padding: 18px 50px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+        box-shadow: 0 8px 25px rgba(255, 75, 43, 0.3);
+        animation: fadeInUp 1s ease-out 0.6s both;
+    }
+
+    .btn-hero:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(255, 75, 43, 0.5);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .stats-section {
+        padding: 80px 20px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #333;
+        text-align: center;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 40px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .stat-item {
+        padding: 30px;
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 15px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-5px);
+    }
+
+    .stat-number {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #ff4b2b;
+        margin-bottom: 10px;
+    }
+
+    .stat-label {
+        font-size: 1.1rem;
+        color: #666;
+    }
+
+    .featured-events {
+        padding: 80px 20px;
+        background: #f8f9fa;
+        color: #333;
+    }
+
+    .featured-events h2 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 60px;
+        color: #ff4b2b;
+    }
+
+    .events-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+
+    .event-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s ease;
+        border: 1px solid rgba(255, 65, 108, 0.2);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        position: relative;
+    }
+
+    .event-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(255, 65, 108, 0.25);
+        border-color: rgba(255, 65, 108, 0.4);
+    }
+
+    .event-image {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+    }
+
+    .event-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+
+    .event-card:hover .event-image img {
+        transform: scale(1.1);
+    }
+
+    .event-price {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 12px rgba(177, 139, 148, 0.3);
+    }
+
+    .event-content {
+        padding: 25px;
+    }
+
+    .event-title {
+        color: #333;
+        font-size: 1.4rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .event-description {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        height: 3.6em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    .event-details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+        border-top: 1px solid rgba(0,0,0,0.1);
+        padding-top: 15px;
+    }
+
+    .detail-item small {
+        color: #666;
+        display: block;
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        letter-spacing: 0.5px;
+        margin-bottom: 5px;
+    }
+
+    .detail-item span {
+        color: #333;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .btn-book {
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        color: white;
+        padding: 12px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-book:hover {
+        filter: brightness(1.1);
+        box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+    }
+
+    .cta-section {
+        padding: 100px 20px;
+        text-align: center;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #333;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .cta-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.03)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,255,255,0.02)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+        opacity: 0.5;
+    }
+
+    .cta-section h2 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+        color: #ff4b2b;
+        position: relative;
+        z-index: 1;
+    }
+
+    .cta-section p {
+        font-size: 1.3rem;
+        color: #666;
+        margin-bottom: 40px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-cta {
+        text-decoration: none;
+        background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        color: white;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: bold;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        display: inline-block;
+        box-shadow: 0 8px 25px rgba(255, 75, 43, 0.3);
+        position: relative;
+        z-index: 1;
+    }
+
+    .btn-cta:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(255, 75, 43, 0.5);
+    }
+
+    @media (max-width: 768px) {
+        .hero h1 {
+            font-size: 2.5rem;
+        }
+        .hero p {
+            font-size: 1.1rem;
+        }
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        .events-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="hero">
+    <h1>Unforgettable Experiences Await</h1>
+    <p>Discover and book the best events in the city instantly.</p>
+    <a href="{% url 'event_list' %}" class="btn-hero">Explore Events Now</a>
+</div>
+
+<div class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-number">500+</div>
+            <div class="stat-label">Events Hosted</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">10K+</div>
+            <div class="stat-label">Happy Attendees</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Cities Covered</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Support Available</div>
+        </div>
+    </div>
+</div>
+
+<div class="featured-events">
+    <h2>Featured Events</h2>
+    <div class="events-grid">
+        {% for event in events %}
+        <div class="event-card">
+            <div class="event-image">
+                <img src="{{ event.image.url }}" alt="{{ event.title }}">
+                <div class="event-price">${{ event.price|default:"29.99" }}</div>
+            </div>
+            <div class="event-content">
+                <h3 class="event-title">{{ event.title }}</h3>
+                <p class="event-description">{{ event.description|truncatewords:20 }}</p>
+                <div class="event-details">
+                    <div class="detail-item">
+                        <small>Date</small>
+                        <span>{{ event.date|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <small>Time</small>
+                        <span>{{ event.time|time:"H:i A"|default:"19:00 PM" }}</span>
+                    </div>
+                    <div class="detail-item" style="grid-column: span 2;">
+                        <small>Location</small>
+                        <span>{{ event.location|default:"Main City Hall" }}</span>
+                    </div>
+                </div>
+                <a href="{% url 'book_ticket' event.id %}" class="btn-book">Book Your Spot</a>
+            </div>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+            <div style="font-size: 4rem; color: #666; margin-bottom: 20px;">🎪</div>
+            <h3 style="color: #666; margin-bottom: 10px;">No Events Found</h3>
+            <p style="color: #666;">Check back soon for upcoming events!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="cta-section">
+    <h2>Ready to Make Memories?</h2>
+    <p>Join thousands of others attending the hottest events this month.</p>
+    <a href="{% url 'event_list' %}" class="btn-cta">Explore All Events</a>
+</div>
+
+{% endblock %}

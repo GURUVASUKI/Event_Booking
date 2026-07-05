@@ -1,0 +1,920 @@
+{% extends 'bookings/base.html' %}
+{% block content %}
+<style>
+    .booking-container {
+        min-height: 80vh;
+        background: white;
+        padding: 60px 5%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .booking-card {
+        max-width: 600px;
+        width: 100%;
+        background: white;
+        border-radius: 25px;
+        box-shadow: 0 15px 50px rgba(255, 65, 108, 0.15), 0 0 0 1px rgba(255, 75, 43, 0.1);
+        overflow: hidden;
+        animation: slideInUp 0.6s ease-out;
+        border: 2px solid rgba(216, 187, 187, 0.993);
+        transition: all 0.3s ease;
+    }
+
+    .booking-card:hover {
+        box-shadow: 0 25px 70px rgba(255, 65, 108, 0.2), 0 0 0 1px rgba(255, 75, 43, 0.15);
+        transform: translateY(-5px);
+    }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .booking-header {
+        background: linear-gradient(135deg, #fd6b8d 0%, #f39787 100%);
+        color: white;
+        padding: 15px 10px;
+        text-align: center;
+    }
+
+    .booking-header h2 {
+        font-size: 28px;
+        margin: 0 0 5px 0;
+        font-weight: 700;
+    }
+
+    .booking-header p {
+        margin: 0;
+        font-size: 12px;
+        opacity: 0.9;
+    }
+
+    .booking-body {
+        padding: 25px 20px;
+    }
+
+    .event-details {
+        background: linear-gradient(135deg, #fff5f7 0%, #fffbf0 100%);
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        border: 2px solid rgba(255, 75, 43, 0.15);
+        border-left: 5px solid #ff4b2b;
+    }
+
+    .event-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #333;
+        margin: 0 0 15px 0;
+    }
+
+    .event-info {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #666;
+        font-size: 15px;
+    }
+
+    .info-icon {
+        font-size: 18px;
+        min-width: 20px;
+    }
+
+    .ticket-section {
+        margin-bottom: 30px;
+    }
+
+    .ticket-label {
+        display: block;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 15px;
+        font-size: 16px;
+    }
+
+    .ticket-input-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .ticket-input-wrapper input {
+        flex: 1;
+        padding: 14px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .ticket-input-wrapper input:focus {
+        outline: none;
+        border-color: #ff416c;
+        box-shadow: 0 0 0 4px rgba(255, 65, 108, 0.1);
+    }
+
+    .ticket-controls {
+        display: flex;
+        gap: 8px;
+    }
+
+    .ticket-btn {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #e0e0e0;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        color: #ff416c;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ticket-btn:hover {
+        border-color: #ff416c;
+        background: #fff0f5;
+    }
+
+    .price-summary {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .price-label {
+        color: #666;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .price-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #ff416c;
+    }
+
+    .submit-button {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 10px 30px rgba(255, 75, 43, 0.3);
+    }
+
+    .submit-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 40px rgba(255, 75, 43, 0.4);
+    }
+
+    .submit-button:active {
+        transform: translateY(0);
+    }
+
+    .booking-note {
+        font-size: 13px;
+        color: #999;
+        text-align: center;
+        margin-top: 15px;
+    }
+
+    .event-image-section {
+        width: 100%;
+        height: 200px;
+        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        border-bottom: 3px solid rgba(255, 75, 43, 0.2);
+    }
+
+    .event-image-section img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+
+    .event-image-section:hover img {
+        transform: scale(1.05);
+    }
+
+    .event-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 48px;
+    }
+
+    .benefits-section {
+        padding: 35px;
+        background: linear-gradient(135deg, rgba(255, 75, 43, 0.05) 0%, rgba(255, 65, 108, 0.05) 100%);
+        margin-top: 30px;
+        border-radius: 15px;
+        border: 2px solid rgba(255, 75, 43, 0.1);
+    }
+
+    .benefits-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .benefits-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+    }
+
+    .benefit-item {
+        text-align: center;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .benefit-item:hover {
+        background: linear-gradient(135deg, rgba(255, 65, 108, 0.1) 0%, rgba(255, 75, 43, 0.1) 100%);
+        transform: translateY(-5px);
+    }
+
+    .benefit-icon {
+        font-size: 32px;
+        margin-bottom: 10px;
+    }
+
+    .benefit-text {
+        font-size: 13px;
+        color: #666;
+        font-weight: 600;
+    }
+
+    /* Seat Mapping Styles */
+    .seat-mapping-section {
+        background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f7 100%);
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        border: 2px solid rgba(255, 75, 43, 0.1);
+    }
+
+    .seat-mapping-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .seat-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .seat-legend {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .legend-seat {
+        width: 25px;
+        height: 25px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .seat-available {
+        background: #e0e0e0;
+        border: 2px solid #999;
+    }
+
+    .seat-selected {
+        background: #ff416c;
+        border: 2px solid #d4306d;
+    }
+
+    .seat-occupied {
+        background: #ccc;
+        border: 2px solid #999;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .seat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(35px, 1fr));
+        gap: 10px;
+        padding: 20px;
+        background: white;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .seat {
+        width: 35px;
+        height: 35px;
+        border: 2px solid #999;
+        border-radius: 4px;
+        background: #e0e0e0;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 12px;
+        color: #666;
+        transition: all 0.3s ease;
+        user-select: none;
+    }
+
+    .seat:hover:not(.seat-occupied) {
+        background: #d4d4d4;
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(255, 65, 108, 0.2);
+    }
+
+    .seat.selected {
+        background: #ff416c;
+        border-color: #d4306d;
+        color: white;
+    }
+
+    .seat.occupied {
+        background: #ccc;
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
+    .seat.occupied:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .selected-seats-display {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        text-align: center;
+    }
+
+    .selected-seats-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .selected-seats-list {
+        font-size: 14px;
+        color: #ff416c;
+        font-weight: 700;
+        min-height: 25px;
+    }
+
+    @media (max-width: 600px) {
+        .benefits-grid {
+            grid-template-columns: 1fr;
+        }
+        .event-image-section {
+            height: 200px;
+        }
+        .seat-grid {
+            grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+            gap: 8px;
+        }
+        .seat {
+            width: 30px;
+            height: 30px;
+            font-size: 11px;
+        }
+    }
+
+    /* Location Mapping Styles */
+    .location-mapping-section {
+        background: linear-gradient(135deg, #f5f7fa 0%, #f0f2f7 100%);
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        border: 2px solid rgba(255, 75, 43, 0.1);
+    }
+
+    .location-mapping-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+
+    .location-info-box {
+        background: white;
+        padding: 15px;
+        border-radius: 10px;
+        border: 2px solid #e0e0e0;
+        margin-bottom: 15px;
+    }
+
+    .location-address {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .location-address-icon {
+        font-size: 24px;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    .location-address-text {
+        flex: 1;
+    }
+
+    .location-address-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #999;
+        text-transform: uppercase;
+        margin-bottom: 4px;
+    }
+
+    .location-address-value {
+        font-size: 15px;
+        font-weight: 600;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    .location-directions-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 15px;
+        background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .location-directions-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 65, 108, 0.3);
+    }
+
+    .map-container {
+        width: 100%;
+        height: 300px;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid #e0e0e0;
+        position: relative;
+        background: #e0e0e0;
+    }
+
+    .map-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    .map-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+        color: #999;
+        font-size: 48px;
+    }
+
+    .location-parking {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #666;
+        margin-top: 12px;
+    }
+
+    .location-parking-icon {
+        font-size: 20px;
+    }
+
+    @media (max-width: 600px) {
+        .benefits-grid {
+            grid-template-columns: 1fr;
+        }
+        .event-image-section {
+            height: 200px;
+        }
+        .seat-grid {
+            grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+            gap: 8px;
+        }
+        .seat {
+            width: 30px;
+            height: 30px;
+            font-size: 11px;
+        }
+        .map-container {
+            height: 250px;
+        }
+    }
+</style>
+
+<section class="booking-container">
+    <div class="booking-card">
+        <!-- Event Image Section -->
+        <div class="event-image-section">
+            {% if event.image %}
+                <img src="{{ event.image.url }}" alt="{{ event.title }}">
+            {% else %}
+                <div class="event-image-placeholder">🎭</div>
+            {% endif %}
+        </div>
+
+        <div class="booking-header">
+            <h2>🎫 Confirm Your Booking</h2>
+            <p>Complete your event registration</p>
+        </div>
+
+        <div class="booking-body">
+            <div class="event-details">
+                <h3 class="event-title">{{ event.title }}</h3>
+                <div class="event-info">
+                    <div class="info-item">
+                        <span class="info-icon">📍</span>
+                        <span>{{ event.location|default:"Venue Location" }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📅</span>
+                        <span>{{ event.date|date:"M d, Y" }} at {{ event.time|time:"H:i A" }}</span>
+                    </div>
+                    {% if event.price %}
+                    <div class="info-item">
+                        <span class="info-icon">💰</span>
+                        <span>${{ event.price }} per ticket</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <form method="POST" action="{% url 'book_ticket' event.id %}" id="bookingForm">
+                {% csrf_token %}
+
+                <div class="ticket-section">
+                    <label class="ticket-label">Number of Tickets</label>
+                    <div class="ticket-input-wrapper">
+                        <button type="button" class="ticket-btn" onclick="decreaseTickets()">−</button>
+                        <input type="number" id="ticketInput" name="num_tickets" value="1" min="1" max="10" required>
+                        <button type="button" class="ticket-btn" onclick="increaseTickets()">+</button>
+                    </div>
+                </div>
+
+                <!-- Seat Mapping Section -->
+                <div class="seat-mapping-section">
+                    <h4 class="seat-mapping-title">🎬 Select Your Seats</h4>
+                    
+                    <div class="seat-legend">
+                        <div class="legend-item">
+                            <div class="legend-seat seat-available"></div>
+                            <span>Available</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-seat seat-selected"></div>
+                            <span>Selected</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-seat seat-occupied"></div>
+                            <span>Occupied</span>
+                        </div>
+                    </div>
+
+                    <div class="seat-grid" id="seatGrid">
+                        <!-- Seats will be generated by JavaScript -->
+                    </div>
+
+                    <div class="selected-seats-display" style="margin-top: 15px;">
+                        <div class="selected-seats-label">Selected Seats:</div>
+                        <div class="selected-seats-list" id="selectedSeatsList">None selected</div>
+                    </div>
+
+                    <!-- Hidden input for selected seats -->
+                    <input type="hidden" id="selectedSeats" name="selected_seats" value="">
+                </div>
+
+                <!-- Location Mapping Section -->
+                <div class="location-mapping-section">
+                    <h4 class="location-mapping-title">📍 Event Location & Directions</h4>
+                    
+                    <div class="location-info-box">
+                        <div class="location-address">
+                            <div class="location-address-icon">📌</div>
+                            <div class="location-address-text">
+                                <div class="location-address-label">Venue Address</div>
+                                <div class="location-address-value">
+                                    {{ event.location|default:"Venue Location Not Specified" }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="https://www.google.com/maps/search/{{ event.location|urlencode }}" 
+                           class="location-directions-link" 
+                           target="_blank" 
+                           rel="noopener noreferrer">
+                            🗺️ Get Directions
+                        </a>
+
+                        <div class="location-parking">
+                            <div class="location-parking-icon">🚗</div>
+                            <div>Parking available on-site</div>
+                        </div>
+                    </div>
+
+                    <!-- Map Container -->
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.1234567890!2d-74.0060!3d40.7128!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x{{ event.location|default:'0x0' }}!2s{{ event.location|urlencode }}!5e0!3m2!1sen!2sus!4v1" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
+                    </div>
+
+                    <div class="location-info-box" style="margin-top: 15px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                            <div style="font-size: 20px;">⏰</div>
+                            <div>
+                                <div class="location-address-label">Event Time</div>
+                                <div class="location-address-value">
+                                    {{ event.date|date:"l, F j, Y" }} at {{ event.time|time:"g:i A" }}
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 20px;">🚪</div>
+                            <div>
+                                <div class="location-address-label">Gates Open</div>
+                                <div class="location-address-value">30 minutes before start time</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% if event.price %}
+                <div class="price-summary">
+                    <span class="price-label">Total Price</span>
+                    <span class="price-value" id="totalPrice">${{ event.price }}</span>
+                </div>
+                {% endif %}
+
+                <button type="submit" class="submit-button">
+                    ✓ Confirm & Continue to Payment
+                </button>
+
+                <p class="booking-note">
+                    ✓ Secure booking | ✓ Instant confirmation | ✓ E-ticket delivered
+                </p>
+            </form>
+
+            <!-- Benefits Section -->
+            <div class="benefits-section">
+                <h4 class="benefits-title">Why Book With Us?</h4>
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🔒</div>
+                        <div class="benefit-text">100% Secure Payment</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">⚡</div>
+                        <div class="benefit-text">Instant Confirmation</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">📧</div>
+                        <div class="benefit-text">Digital Tickets</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">💪</div>
+                        <div class="benefit-text">Best Support</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">🎁</div>
+                        <div class="benefit-text">Exclusive Deals</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">✨</div>
+                        <div class="benefit-text">VIP Access</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    const ticketInput = document.getElementById('ticketInput');
+    const totalPriceEl = document.getElementById('totalPrice');
+    const eventPrice = parseFloat("{{ event.price|default:'0' }}") || 0;
+    const seatGrid = document.getElementById('seatGrid');
+    const selectedSeatsInput = document.getElementById('selectedSeats');
+    const selectedSeatsList = document.getElementById('selectedSeatsList');
+
+    // Seat configuration
+    const TOTAL_SEATS = 60;
+    const SEATS_PER_ROW = 10;
+    const OCCUPIED_SEATS = [5, 12, 18, 25, 31, 38, 42, 48, 52]; // Example occupied seats
+    let selectedSeats = [];
+
+    // Initialize seat grid
+    function initializeSeatGrid() {
+        seatGrid.innerHTML = '';
+        for (let i = 1; i <= TOTAL_SEATS; i++) {
+            const seat = document.createElement('div');
+            seat.classList.add('seat');
+            seat.textContent = i;
+            seat.dataset.seatNumber = i;
+
+            if (OCCUPIED_SEATS.includes(i)) {
+                seat.classList.add('occupied');
+            } else {
+                seat.addEventListener('click', function() {
+                    toggleSeat(this);
+                });
+            }
+
+            seatGrid.appendChild(seat);
+        }
+    }
+
+    // Toggle seat selection
+    function toggleSeat(seatElement) {
+        const seatNumber = parseInt(seatElement.dataset.seatNumber);
+        const ticketsNeeded = parseInt(ticketInput.value);
+
+        if (seatElement.classList.contains('selected')) {
+            // Deselect seat
+            seatElement.classList.remove('selected');
+            selectedSeats = selectedSeats.filter(s => s !== seatNumber);
+        } else {
+            // Select seat only if we haven't reached the ticket limit
+            if (selectedSeats.length < ticketsNeeded) {
+                seatElement.classList.add('selected');
+                selectedSeats.push(seatNumber);
+            } else {
+                alert(`Please select only ${ticketsNeeded} seat(s)`);
+                return;
+            }
+        }
+
+        updateSelectedSeatsDisplay();
+    }
+
+    // Update selected seats display
+    function updateSelectedSeatsDisplay() {
+        selectedSeatsInput.value = selectedSeats.sort((a, b) => a - b).join(',');
+        
+        if (selectedSeats.length === 0) {
+            selectedSeatsList.textContent = 'None selected';
+        } else {
+            selectedSeatsList.textContent = 'Seat ' + selectedSeats.sort((a, b) => a - b).join(', Seat ');
+        }
+    }
+
+    // Increase tickets
+    function increaseTickets() {
+        const currentValue = parseInt(ticketInput.value);
+        if (currentValue < 10) {
+            ticketInput.value = currentValue + 1;
+            validateSeatSelection();
+            updatePrice();
+        }
+    }
+
+    // Decrease tickets
+    function decreaseTickets() {
+        const currentValue = parseInt(ticketInput.value);
+        if (currentValue > 1) {
+            ticketInput.value = currentValue - 1;
+            validateSeatSelection();
+            updatePrice();
+        }
+    }
+
+    // Validate seat selection
+    function validateSeatSelection() {
+        const ticketsNeeded = parseInt(ticketInput.value);
+        if (selectedSeats.length > ticketsNeeded) {
+            // Remove extra selected seats
+            selectedSeats = selectedSeats.slice(0, ticketsNeeded);
+            
+            // Update seat UI
+            document.querySelectorAll('.seat.selected').forEach((seat, index) => {
+                if (index >= ticketsNeeded) {
+                    seat.classList.remove('selected');
+                }
+            });
+        }
+        updateSelectedSeatsDisplay();
+    }
+
+    // Update price
+    function updatePrice() {
+        if (totalPriceEl) {
+            const tickets = parseInt(ticketInput.value);
+            const total = (eventPrice * tickets).toFixed(2);
+            totalPriceEl.textContent = '$' + total;
+        }
+    }
+
+    // Event listeners
+    ticketInput.addEventListener('input', updatePrice);
+    ticketInput.addEventListener('change', function() {
+        if (this.value < 1) this.value = 1;
+        if (this.value > 10) this.value = 10;
+        validateSeatSelection();
+        updatePrice();
+    });
+
+    // Form submission validation
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        const ticketsNeeded = parseInt(ticketInput.value);
+        if (selectedSeats.length !== ticketsNeeded) {
+            e.preventDefault();
+            alert(`Please select exactly ${ticketsNeeded} seat(s)`);
+            return false;
+        }
+    });
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeSeatGrid();
+    });
+</script>
+{% endblock %}

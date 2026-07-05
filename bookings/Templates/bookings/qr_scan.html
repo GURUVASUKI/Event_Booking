@@ -1,0 +1,87 @@
+{% extends 'bookings/base.html' %}
+
+{% block title %}QR Scanner{% endblock %}
+
+{% block content %}
+<style>
+.scanner-container{max-width:900px;margin:40px auto;text-align:center}
+#qr-reader{width:100%;max-width:720px;margin:0 auto}
+.info{margin-top:16px;color:#555}
+.btn-link{display:inline-block;margin-top:12px;padding:8px 16px;border-radius:8px;background:#ff416c;color:#fff;text-decoration:none}
+</style>
+
+<div class="scanner-container">
+  <h2>Scan Ticket QR Code (Localhost)</h2>
+  <p class="info">Allow camera access and point to the ticket QR code. Scans work on localhost (127.0.0.1).</p>
+  <div id="qr-reader"></div>
+  <p id="scan-result" class="info"></p>
+  <a href="{% url 'home' %}" class="btn-link">Back Home</a>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode@2.3.7/minified/html5-qrcode.min.js"></script>
+<script>
+  const resultElem = document.getElementById('scan-result');
+  const qrRegionId = 'qr-reader';
+
+  function extractTicketId(scannedText){
+    try{
+      // If QR contains a URL like http://.../verify/<ticket_id>
+      const url = new URL(scannedText);
+      const parts = url.pathname.split('/').filter(Boolean);
+      const last = parts[parts.length-1];
+      return last;
+    }catch(e){
+      // Not a full URL, assume scannedText is the ticket id
+      return scannedText.trim();
+    }
+  }
+
+  function onScanSuccess(decodedText, decodedResult){
+    // stop scanner then redirect to verify
+    resultElem.textContent = `Scanned: ${decodedText}`;
+    html5QrcodeScanner.clear().then(_ => {
+      const ticketId = extractTicketId(decodedText);
+      if(ticketId){
+        window.location.href = `/verify/${ticketId}/`;
+      } else {
+        resultElem.textContent = 'Could not extract ticket id from QR.';
+      }
+    }).catch(err => {
+      console.error('Failed to clear scanner', err);
+      resultElem.textContent = 'Scan complete. Redirecting...';
+      const ticketId = extractTicketId(decodedText);
+      window.location.href = `/verify/${ticketId}/`;
+    });
+  }
+
+  function onScanFailure(error){
+    // console.debug(`Scan failure: ${error}`);
+  }
+
+  const html5QrcodeScanner = new Html5Qrcode(qrRegionId);
+  const config = { fps: 10, qrbox: {width: 300, height:300} };
+  Html5Qrcode.getCameras().then(devices =>{
+    if(devices && devices.length){
+      const cameraId = devices[0].id;
+      html5QrcodeScanner.start(
+        cameraId,
+        config,
+        onScanSuccess,
+        onScanFailure
+      ).catch(err=>{
+        resultElem.textContent = 'Unable to start camera: '+err;
+      });
+    } else {
+      resultElem.textContent = 'No camera found. You can use an external webcam or test with image file upload.';
+    }
+  }).catch(err=>{
+    resultElem.textContent = 'Camera access error: '+err;
+  });
+
+  
+</script>
+
+{% endblock %}
+
+
+

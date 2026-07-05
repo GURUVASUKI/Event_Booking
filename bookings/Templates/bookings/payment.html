@@ -1,0 +1,352 @@
+{% extends 'bookings/base.html' %}
+{% block content %}
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+    }
+
+    .payment-container {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #fff5f7 0%, #ffffff 50%, #fffbf0 100%);
+        padding: 60px 5%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .payment-wrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        max-width: 1100px; /* Reduced width for better focus */
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    /* Main Form Card */
+    .payment-form-card {
+        flex: 1.2;
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .payment-header {
+        background: #1a1a1a; /* Professional dark header */
+        color: white;
+        padding: 30px;
+        text-align: left;
+    }
+
+    .payment-header h2 {
+        font-size: 24px;
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .payment-body {
+        padding: 30px;
+    }
+
+    /* Modern Method Selection */
+    .payment-methods {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 12px;
+        margin: 20px 0 30px 0;
+    }
+
+    .payment-method-card {
+        border: 2px solid #f0f0f0;
+        border-radius: 12px;
+        padding: 15px 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: #fff;
+    }
+
+    .payment-method-card:hover {
+        border-color: #ff416c;
+        background: #fffafa;
+    }
+
+    .payment-method-card.active {
+        border-color: #ff416c;
+        background: #fff0f3;
+    }
+
+    .payment-method-icon {
+        font-size: 24px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .payment-method-name {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #666;
+    }
+
+    /* Form Styling */
+    .payment-form-title {
+        font-size: 16px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .payment-form-group {
+        margin-bottom: 20px;
+    }
+
+    .payment-form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #555;
+    }
+
+    .payment-form-input {
+        width: 100%;
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+
+    .payment-form-input:focus {
+        border-color: #ff416c;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 65, 108, 0.1);
+    }
+
+    .payment-form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    /* Sidebar Summary */
+    .order-summary {
+        flex: 0.8;
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 25px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
+        border: 1px solid #eee;
+        height: fit-content;
+        position: sticky;
+        top: 40px;
+    }
+
+    .order-summary-header {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 14px;
+    }
+
+    .order-item-label { color: #777; }
+    .order-item-value { font-weight: 600; color: #333; }
+
+    .order-total {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 2px dashed #eee;
+        display: flex;
+        justify-content: space-between;
+        font-size: 20px;
+        font-weight: 800;
+        color: #ff416c;
+    }
+
+    .process-payment-button {
+        width: 100%;
+        margin-top: 25px;
+        padding: 16px;
+        background: #ff416c;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.2s, background 0.2s;
+    }
+
+    .process-payment-button:hover {
+        background: #ff2a57;
+        transform: translateY(-2px);
+    }
+
+    .back-button {
+        text-decoration: none;
+        color: #666;
+        font-size: 13px;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+        .payment-wrapper {
+            flex-direction: column;
+        }
+        .order-summary {
+            position: static;
+            order: -1; /* Summary on top for mobile */
+        }
+    }
+
+    /* Hide element class */
+    .hidden { display: none; }
+    .payment-method-radio { display: none; }
+</style>
+
+<div class="payment-container">
+    <div class="payment-wrapper">
+        <div class="payment-form-card">
+            <div class="payment-header">
+                <h2>Secure Checkout</h2>
+            </div>
+            <div class="payment-body">
+                <a href="{% url 'book_ticket' booking.event.id %}" class="back-button">← Return to event</a>
+                
+                <form method="POST" id="paymentForm">
+                    {% csrf_token %}
+                    
+                    <div class="payment-form-title">1. Payment Method</div>
+                    <div class="payment-methods">
+                        <label class="payment-method-card active" data-payment="stripe">
+                            <input type="radio" name="payment_method" value="stripe" checked>
+                            <span class="payment-method-icon">💳</span>
+                            <span class="payment-method-name">Card</span>
+                        </label>
+                        <label class="payment-method-card" data-payment="paypal">
+                            <input type="radio" name="payment_method" value="paypal">
+                            <span class="payment-method-icon">🅿️</span>
+                            <span class="payment-method-name">PayPal</span>
+                        </label>
+                        <label class="payment-method-card" data-payment="upi">
+                            <input type="radio" name="payment_method" value="upi">
+                            <span class="payment-method-icon">📱</span>
+                            <span class="payment-method-name">UPI</span>
+                        </label>
+                    </div>
+
+                    <div id="stripe-form" class="payment-form-section">
+                        <div class="payment-form-title">2. Card Information</div>
+                        <div class="payment-form-group">
+                            <label class="payment-form-label">Cardholder Name</label>
+                            <input type="text" class="payment-form-input card-input" name="card_holder" placeholder="Jane Doe">
+                        </div>
+                        <div class="payment-form-group">
+                            <label class="payment-form-label">Card Number</label>
+                            <input type="text" class="payment-form-input card-input" name="card_number" placeholder="0000 0000 0000 0000">
+                        </div>
+                        <div class="payment-form-row">
+                            <div class="payment-form-group">
+                                <label class="payment-form-label">Expiry</label>
+                                <input type="text" class="payment-form-input card-input" placeholder="MM/YY">
+                            </div>
+                            <div class="payment-form-group">
+                                <label class="payment-form-label">CVC</label>
+                                <input type="text" class="payment-form-input card-input" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="upi-form" class="payment-form-section hidden">
+                        <div class="payment-form-title">2. UPI Details</div>
+                        <div class="payment-form-group">
+                            <label class="payment-form-label">VPA / UPI ID</label>
+                            <input type="text" class="payment-form-input" name="upi_id" placeholder="username@bank">
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                    <button type="submit" class="process-payment-button">Pay Now</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="order-summary">
+            <div class="order-summary-header">Order Summary</div>
+            
+            <div style="margin-bottom: 20px;">
+                <div style="font-weight: 700; color: #1a1a1a;">{{ booking.event.title }}</div>
+                <div style="font-size: 12px; color: #888;">{{ booking.event.date|date:"M d, Y" }}</div>
+                <div style="font-size: 12px; color: #666;">Price per ticket: <strong>${{ booking.event.price }}</strong></div>
+            </div>
+
+            {% if ticket_subtotal == '0.00' or ticket_subtotal == None %}
+                <div style="background: #fff3cd; color: #856404; padding: 12px; border-radius: 8px; margin-bottom: 15px; border-left: 3px solid #ffc107;">
+                    ⚠️ <strong>Price Not Available:</strong> The event price has not been set. Please contact support.
+                </div>
+            {% endif %}
+
+            <div class="order-item">
+                <span class="order-item-label">Tickets ({{ booking.tickets }})</span>
+                <span class="order-item-value">${{ ticket_subtotal|default:'0.00' }}</span>
+            </div>
+            <div class="order-item">
+                <span class="order-item-label">Processing Fee</span>
+                <span class="order-item-value" id="processingFee">${{ processing_fee|default:'0.00' }}</span>
+            </div>
+            
+            <div class="order-total">
+                <span>Total</span>
+                <span id="totalAmount">${{ total_amount|default:'0.00' }}</span>
+            </div>
+
+            <div style="margin-top: 30px; text-align: center;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" width="60" style="opacity: 0.5;">
+                <p style="font-size: 11px; color: #aaa; margin-top: 10px;">Guaranteed safe & secure checkout</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const methodCards = document.querySelectorAll('.payment-method-card');
+    
+    methodCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const type = card.dataset.payment;
+            
+            // UI Toggle
+            methodCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            card.querySelector('input').checked = true;
+
+            // Form Toggle
+            document.querySelectorAll('.payment-form-section').forEach(s => s.classList.add('hidden'));
+            const targetForm = document.getElementById(type + '-form');
+            if(targetForm) targetForm.classList.remove('hidden');
+        });
+    });
+</script>
+{% endblock %}

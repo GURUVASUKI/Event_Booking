@@ -1,0 +1,288 @@
+{% extends 'bookings/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body { background: #f8f9fa; color: #333; }
+    footer { border-top: none; }
+    .contact-hero {
+        text-align: center;
+        padding: 80px 5% 60px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .contact-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 30% 20%, rgba(255, 65, 108, 0.1) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 80%, rgba(255, 75, 43, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+
+    .contact-hero h1 {
+        font-size: 3.5rem;
+        color: #333;
+        margin-bottom: 20px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .contact-hero p {
+        font-size: 1.2rem;
+        color: #666;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .contact-section {
+        padding: 80px 5%;
+        background: #f8f9fa;
+    }
+
+    .contact-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: start;
+    }
+
+    .contact-info {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 20px;
+        padding: 40px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .contact-info h2 {
+        color: #ff4b2b;
+        font-size: 2rem;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.03);
+        border-radius: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    .info-item:hover {
+        transform: translateY(-5px);
+        background: rgba(0, 0, 0, 0.08);
+    }
+
+    .info-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+        font-size: 1.5rem;
+        color: white;
+    }
+
+    .info-content h3 {
+        color: #333;
+        margin-bottom: 5px;
+        font-size: 1.1rem;
+    }
+
+    .info-content p {
+        color: #666;
+        margin: 0;
+        font-size: 0.95rem;
+    }
+
+    .contact-form {
+        background: rgba(0, 0, 0, 0.05);
+        border-radius: 20px;
+        padding: 40px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+    }
+
+    .contact-form h2 {
+        color: #ff4b2b;
+        font-size: 2rem;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #333;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 15px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.1);
+        color: #333;
+        font-size: 16px;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: #ff4b2b;
+        box-shadow: 0 0 20px rgba(255, 75, 43, 0.3);
+        background: rgba(0, 0, 0, 0.15);
+    }
+
+    .form-group textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        border: none;
+        border-radius: 10px;
+        color: white;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(255, 75, 43, 0.4);
+    }
+
+
+
+    .social-icon:hover {
+        background: linear-gradient(45deg, #ff4b2b, #ff416c);
+        transform: translateY(-3px);
+        box-shadow: 0 5px 15px rgba(255, 75, 43, 0.3);
+    }
+
+    @media (max-width: 768px) {
+        .contact-container {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+
+        .contact-hero h1 {
+            font-size: 2.5rem;
+        }
+
+        .info-item {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .info-icon {
+            margin-right: 0;
+            margin-bottom: 15px;
+        }
+    }
+</style>
+
+<section class="contact-hero">
+    <h1 class="animate__animated animate__fadeInDown">Get In Touch</h1>
+    <p class="animate__animated animate__fadeInUp">Have questions about our events? We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+</section>
+
+<section class="contact-section">
+    <div class="contact-container">
+        <div class="contact-info animate__animated animate__fadeInLeft">
+            <h2>Contact Information</h2>
+
+            <div class="info-item">
+                <div class="info-icon">📍</div>
+                <div class="info-content">
+                    <h3>Address</h3>
+                    <p>123 Event Street<br>City Center, State 12345</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">📞</div>
+                <div class="info-content">
+                    <h3>Phone</h3>
+                    <p>+1 (555) 123-4567</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">✉️</div>
+                <div class="info-content">
+                    <h3>Email</h3>
+                    <p>info@eventpass.com</p>
+                </div>
+            </div>
+
+            <div class="info-item">
+                <div class="info-icon">🕒</div>
+                <div class="info-content">
+                    <h3>Business Hours</h3>
+                    <p>Mon - Fri: 9:00 AM - 6:00 PM<br>Sat - Sun: 10:00 AM - 4:00 PM</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-form animate__animated animate__fadeInRight">
+            <h2>Send us a Message</h2>
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your Full Name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+                    <input type="text" id="subject" name="subject" placeholder="What's this about?" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" placeholder="Tell us how we can help you..." required></textarea>
+                </div>
+
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+
+    
+</section>
+{% endblock %}
